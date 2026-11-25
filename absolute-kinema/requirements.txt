@@ -1,0 +1,9 @@
+# AbsoluteKinema (absolute-kinema) v0.4-rc2 - tested with Python 3.13.18 on Ubuntu 24.04 (x86_64)
+numpy==2.5.3
+opencv-contrib-python-headless==5.1.0.95   # the build actually tested; plain opencv-python-headless is untested
+pillow==12.3.0
+PyYAML==6.0.3
+pocketsphinx==5.1.1     # only needed when you supply a narration recording, or use espeak/piper AI narration
+pytest==9.1.1           # only needed to run the tests
+kokoro-onnx==0.6.1       # only needed for narration.tts.engine: kokoro (MIT; model weights are Apache-2.0
+                         # and downloaded separately on first use - see README.md's 'Kokoro voices')

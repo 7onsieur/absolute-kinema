@@ -1,0 +1,40 @@
+title: "The Water Cycle"
+output: {name: water_cycle, fps: 30}
+style: {theme: day, accent: "#2F80ED", particles: true}
+
+narration:
+  audio: null          # silent example: timing is estimated from the script
+  offset: 0.8
+  script:
+    - id: s1
+      text: "Water is always on the move."
+    - id: s2
+      text: "The sun heats the sea, and water evaporates into the air."
+    - id: s3
+      text: "It cools into clouds, falls as rain, and flows back to the sea."
+
+scenes:
+  - id: intro
+    narration: [s1]
+    transition: fade
+    camera: {zoom: [1.0, 1.06]}
+    elements:
+      - {type: icon, name: drop, size: 170, pos: [960, 330], enter: pop}
+      - {type: title, text: "The Water Cycle", subtitle: "a never-ending loop", pos: [960, 610], at: 0.25, enter: slide_up}
+
+  - id: cycle
+    narration: [s2, s3]
+    transition: circle
+    camera: {zoom: [1.0, 1.03]}
+    elements:
+      - {type: text, text: "Where does the rain come from?", size: 44, pos: [960, 150], enter: fade}
+      - type: flow
+        pos: [960, 470]
+        width: 1680
+        cycle: true
+        nodes:
+          - {label: "Sun heats", icon: sun, at: "heats-0.2", sub: "energy"}
+          - {label: "Evaporation", icon: wave, at: "evaporates-0.1", sub: "water rises"}
+          - {label: "Clouds form", icon: cloud, at: "clouds-0.1", sub: "condensation"}
+          - {label: "Rain falls", icon: rain, at: "rain-0.1", sub: "precipitation"}
+          - {label: "Back to sea", icon: drop, at: "flows-0.1", sub: "collection"}

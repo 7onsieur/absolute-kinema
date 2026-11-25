@@ -1,0 +1,79 @@
+# AbsoluteKinema project: How earthquakes happen (20-30 s, Kokoro bf_emma narration)
+title: "How Earthquakes Happen"
+output: {name: earthquakes, fps: 30}
+style: {theme: dusk, accent: "#FF7043", particles: true}
+
+intro_fade: 0.3
+outro_fade: 0.6
+outro_hold: 1.5
+
+narration:
+  audio: null
+  offset: 0.6
+  script:
+    - id: s1
+      text: "How do earthquakes happen?"
+    - id: s2
+      text: "Earth's outer shell is broken into giant pieces called tectonic plates, which drift a few centimetres every year."
+    - id: s3
+      text: "Where two plates meet, their edges lock together, and stress slowly builds up in the rock."
+    - id: s4
+      text: "When the rock finally snaps, the plates lurch past each other, releasing energy in a split second."
+    - id: s5
+      text: "That energy travels outwards as seismic waves, and the shaking we feel is an earthquake."
+  tts:
+    enabled: true
+    engine: kokoro
+    voice: bf_emma
+    speed: 1.0
+
+captions:
+  enabled: true
+  max_chars: 42
+
+scenes:
+  - id: intro
+    narration: [s1]
+    transition: fade
+    camera: {zoom: [1.0, 1.06]}
+    elements:
+      - {type: icon, name: globe, size: 170, pos: [960, 320], enter: pop}
+      - {type: title, text: "How Earthquakes Happen", subtitle: "from slow stress to sudden shaking", pos: [960, 600], at: 0.2, enter: slide_up}
+
+  - id: plates
+    narration: [s2]
+    transition: slide
+    camera: {zoom: [1.0, 1.03]}
+    elements:
+      - {type: image, path: art/plates_drift.png, width: 1050, pos: [600, 500], enter: fade, at: 0.1}
+      - type: card
+        title: "Tectonic plates"
+        body: "Earth's outer shell is split into giant slabs."
+        icon: globe
+        width: 640
+        pos: [1490, 380]
+        at: "tectonic-0.1"
+        enter: slide_left
+      - {type: text, text: "Drift: about 2–10 cm per year", size: 44, width: 620, pos: [1490, 700], at: "centimetres-0.2", enter: pop}
+
+  - id: stress
+    narration: [s3, s4]
+    transition: wipe
+    camera: {zoom: [1.0, 1.03]}
+    elements:
+      - {type: image, path: art/fault_locked.png, width: 1050, pos: [600, 500], enter: fade, at: 0.1, until: "snaps-0.05", pulse: "stress"}
+      - {type: image, path: art/fault_snap.png, width: 1050, pos: [600, 500], enter: pop, at: "snaps-0.05"}
+      - type: bullets
+        items: ["Edges lock", "Stress builds", "Rock snaps", "Energy released"]
+        cues: ["lock", "stress", "snaps", "energy"]
+        size: 46
+        width: 640
+        pos: [1490, 480]
+
+  - id: waves
+    narration: [s5]
+    transition: circle
+    camera: {zoom: [1.0, 1.05]}
+    elements:
+      - {type: text, text: "Seismic waves", size: 60, pos: [960, 110], at: "seismic-0.1", enter: pop}
+      - {type: image, path: art/seismic_waves.png, width: 1000, motion: zoom, pos: [960, 520], enter: fade, at: 0.1, pulse: "shaking"}

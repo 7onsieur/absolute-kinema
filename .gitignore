@@ -1,0 +1,14 @@
+# Python and test caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Render working files (any project, including the bundled examples)
+**/work/
+
+# Generated preview and review files you make locally
+**/output/*.captions_review.md
+!examples/earthquakes/output/earthquakes.captions_review.md
+
+.DS_Store

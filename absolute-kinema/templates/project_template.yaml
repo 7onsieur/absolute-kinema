@@ -1,0 +1,220 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# AbsoluteKinema (absolute-kinema) project file (v0.4-rc2)
+# Edit the text below. You do not need to touch any Python.
+# Times are in seconds. Positions use a 1920 x 1080 frame:
+#   named spots: center, top, bottom, left, right, top-left, top-right,
+#                bottom-left, bottom-right   - or exact [x, y], e.g. [960, 400]
+# Run:  python3 scripts/make_video.py validate <this file>
+# ─────────────────────────────────────────────────────────────────────────────
+title: "My topic in 15 seconds"
+
+output:
+  name: my_explainer        # file name: output/my_explainer.mp4  (letters, numbers, - and _ only)
+  fps: 30                   # 24, 25 or 30
+  # width/height are fixed at 1920x1080 in this version - do not set them.
+
+style:
+  theme: dusk               # dusk | night | day | paper - the default background for every scene
+  accent: "#F7931E"         # highlight colour (hex) used for bullets, cue pulses, flow arrows, etc.
+  particles: true           # gentle floating dots in the background
+  font_dir: null            # optional: a folder (relative to this file) with your own .ttf/.otf fonts
+
+# Fade in from black at the very start, and fade out to black at the very end.
+# Both default to the values below; set to 0 to disable (e.g. if you're concatenating
+# clips yourself and don't want a black frame at the join).
+intro_fade: 0.3
+outro_fade: 0.6
+outro_hold: 1.5             # extra seconds the LAST scene stays on screen after its narration ends
+
+narration:
+  audio: null               # path to YOUR recording (e.g. narration.m4a), or null for no voice /
+                              # AI narration (see tts: below - set at most one of audio or tts.enabled)
+  offset: 0.6                # seconds of picture before the voice starts
+  script:                   # must match the recording WORD FOR WORD (including ad-libs) - or,
+                              # with tts.enabled below, this IS the text that gets spoken
+    - id: s1
+      text: "First sentence of the narration."
+    - id: s2
+      text: "Second sentence, with a key word we can cue."
+      # spoken: {GitHub: "git hub"}   # only if a word isn't recognised by the aligner (or, with
+      #                                 AI narration, to fix how the TTS engine pronounces it):
+      #                                 write it as it sounds, using ordinary dictionary words
+  # tts:                      # OPTIONAL: AI-generated narration instead of a recording - leave
+  #                              this whole block out (or enabled: false) for a recording or silence
+  #   enabled: true
+  #   engine: kokoro            # kokoro (recommended; natural voice, downloads model on first use -
+  #                              see README.md's "Kokoro-ONNX" section) | espeak (apt-get install
+  #                              espeak-ng; mechanical-sounding but always offline) | piper (needs a
+  #                              downloaded voice - see README.md's "Piper" section)
+  #   voice: bf_emma            # run: python3 scripts/make_video.py voices --engine kokoro
+  #                              (bf_emma is the default British voice, and the only one reviewed
+  #                              by a human for this skill - see SKILL.md's "AI narration" section)
+  #   speed: 1.0                # 0.5 (slower) .. 2.0 (faster)
+  #   kokoro_model_dir: null    # optional: reuse an existing folder with the Kokoro model files
+  #                              instead of downloading them (also settable via the
+  #                              AE_KOKORO_MODEL_DIR environment variable)
+  # NOTE: espeak-ng's British English voices (en-gb, en-gb-x-rp, en-gb-scotland, ...) are known,
+  # in this project's own testing, to be unreliable with the forced-alignment step below - the
+  # render still succeeds, but falls back to ESTIMATED caption/cue timing rather than timing
+  # matched to the real audio. Use voice: en-us for alignment that is reliable in testing. See
+  # SKILL.md's "AI narration" section for the full story.
+
+# ── Estimating duration without a recording ────────────────────────────────
+# With no recording, timing is estimated from the words themselves (roughly
+# 0.25-0.45s per word depending on syllable count, slower for longer words).
+# `validate` prints the actual word count, the resulting pace, and a rule-of-thumb
+# formula for hitting a different target duration - run it after every narration
+# edit rather than guessing: python3 scripts/make_video.py validate <this file>
+# As a rough starting point before that: words ≈ 3 × (target_seconds - 2).
+
+captions:
+  enabled: true             # burned-in captions; an .srt file is also made when audio is supplied
+  max_chars: 42             # longest caption line
+
+scenes:                     # played in order
+  - id: intro
+    narration: [s1]         # this scene lasts as long as these sentences (or use  duration: 4)
+    transition: fade        # how this scene appears: cut | fade | slide | wipe | circle
+    camera: {zoom: [1.0, 1.05]}   # slow push-in from 100% to 105%
+    # theme: day             # optional: override style.theme for just this one scene
+    elements:
+      - type: title
+        text: "My topic"
+        subtitle: "in 15 seconds"
+        tag: "explainer"
+        pos: center
+        enter: pop          # pop | fade | slide_up | slide_left | slide_right | type | none
+
+  - id: idea
+    narration: [s2]
+    transition: slide
+    elements:
+      - type: card
+        title: "Key idea"
+        body: "One short sentence that explains it."
+        icon: bulb          # see: python3 scripts/make_video.py icons
+        pos: left
+        at: 0.3             # appears 0.3 s after the scene starts
+      - type: icon
+        name: star
+        label: "key word"
+        pos: right
+        at: "key"           # appears when the word "key" is spoken in this scene
+        pulse: "cue"        # little bounce on the word "cue"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Cues (the "at:", "until:" and "pulse:" fields above)
+# ─────────────────────────────────────────────────────────────────────────────
+# A cue tells an element WHEN to appear, relative to the start of its scene. It can be:
+#   - a number:        at: 0.5          -> 0.5s after the scene starts
+#   - a sentence id:    at: s2           -> the moment sentence s2 begins (PREFERRED - this can
+#                                            never become ambiguous, even if you reword the sentence)
+#   - a word:           at: "evaporates" -> the moment that word is spoken in THIS SCENE's narration.
+#                        This only works if the word appears exactly once in the scene. If it
+#                        appears more than once (e.g. "year" in a sentence that says "year one...
+#                        year two"), validate will REJECT it rather than silently picking the wrong
+#                        one - pick an occurrence instead (see below) or switch to a sentence id.
+#   - an occurrence:     at: "year#2"    -> the SECOND time "year" is spoken in this scene
+#   - a word + offset:   at: "rain-0.1"  -> 0.1s before the word "rain" is spoken (use "word+0.2"
+#                                            for after)
+# `until:` (a cue of its own) makes the element fade out at that moment instead of staying for the
+# rest of the scene. `pulse:` (also a cue) gives the element a small bounce at that moment.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Element reference - every type, every option. Options not listed below are ignored.
+# Every element also accepts: pos (anchor or [x,y]), at, until, pulse, enter, color (hex, overrides
+# the theme's text/line colour where that element supports it).
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# title - a big heading, optionally with a small tag pill above it and a subtitle below.
+#   - type: title
+#     text: "Headline text"        # required
+#     subtitle: "smaller line underneath"     # optional
+#     tag: "label"                 # optional small pill shown above the title, auto-uppercased
+#     size: 78                     # optional, default 78 (font size in px)
+#     subtitle_size: 34            # optional, default 34
+#     width: 1500                  # optional, default 1500 (wraps onto more than one line past this)
+#     # enter: type                # "type" live-types the headline out character by character
+#
+# text - a plain paragraph, for anything that doesn't need a title's visual weight.
+#   - type: text
+#     text: "Some supporting sentence."   # required
+#     size: 40                     # optional, default 40
+#     width: 1100                  # optional, default 1100 (wrap width)
+#
+# bullets - a vertical list that reveals one item at a time.
+#   - type: bullets
+#     items: ["First point", "Second point", "Third point"]   # required
+#     size: 40                     # optional, default 40
+#     width: 900                   # optional, default 900
+#     stagger: 0.5                 # optional, default 0.5s between items (ignored for any item
+#                                   #   that has its own entry in `cues:`)
+#     cues: [0.0, "second", "s3"]  # optional, one cue per item (number/word/sentence id/occurrence);
+#                                   #   overrides `stagger` for that item
+#
+# card - a titled box with an optional icon and body text. Good for "the key idea" moments.
+#   - type: card
+#     title: "Headline"            # required
+#     body: "One or two sentences of explanation."   # optional
+#     icon: bulb                   # optional - see: python3 scripts/make_video.py icons
+#     width: 560                   # optional, default 560 (height grows automatically with content)
+#
+# icon - one of the built-in icons, optionally in a circular badge with a caption underneath.
+#   - type: icon
+#     name: star                   # required - see: python3 scripts/make_video.py icons
+#                                   #   (an unknown name draws a labelled placeholder dot instead
+#                                   #   of failing, so a typo won't break your render - but check
+#                                   #   the contact sheet, it will look wrong)
+#     size: 140                    # optional, default 140 (roughly the icon's width in px)
+#     label: "caption under the icon"   # optional
+#     label_size: 32               # optional, default 32
+#     badge: true                  # optional, default true - draws a circular background behind
+#                                   #   the icon; set false for a bare icon
+#
+# checklist - a card-style box of items that tick off one by one.
+#   - type: checklist
+#     items: ["Step one", "Step two", "Step three"]   # required
+#     title: "Steps"                # optional header pill
+#     size: 46                      # optional, default 46
+#     width: 900                    # optional, default 900
+#     stagger: 0.6                  # optional, default 0.6s between ticks (ignored for any item
+#                                    #   covered by `ticks:`)
+#     ticks: [1.0, "word", "s2"]    # optional, one cue per item for exactly when it ticks
+#
+# flow - a left-to-right sequence of connected cards, e.g. the steps of a process or a timeline.
+#   - type: flow
+#     nodes:                        # required, 1 or more
+#       - {label: "Step A", icon: sun, sub: "optional sub-label", at: "word-or-s1"}
+#       - {label: "Step B", icon: cloud}   # a node with no `at:` appears `stagger` seconds after
+#                                           #   the previous one
+#     width: 1500                   # optional, default 1500 (total width the nodes are spread over)
+#     node_width: 230               # optional, default 230
+#     node_height: 210              # optional, default 210
+#     stagger: 0.7                  # optional, default 0.7s, used for any node with no `at:`
+#     cycle: false                  # optional, default false - draws a looping arrow from the last
+#                                    #   node back to the first (good for a repeating cycle, e.g.
+#                                    #   evaporation -> condensation -> precipitation -> ...)
+#
+# arrow - a single arrow between two points. Useful alongside other elements, not usually alone.
+#   - type: arrow
+#     from: left                    # required - anchor name or [x, y]
+#     to: right                     # required - anchor name or [x, y]
+#     width: 8                      # optional, default 8 (line thickness)
+#     # color: "#FF0000"            # optional, defaults to the theme's accent colour
+#
+# image - your own artwork (must be yours or properly licensed; see README's licence note).
+#   - type: image
+#     path: my_drawing.png          # required, relative to THIS project file
+#     width: 600                    # optional, default 600 (height follows the image's aspect ratio)
+#     motion: bob                   # optional: none | bob | sway | zoom
+#     frame: true                   # optional, default false - draws a card-style frame behind it
+#
+# counter - a number that counts up (or down) to a target, e.g. a statistic or a running total.
+#   - type: counter
+#     to: 70                        # required - the end value
+#     from: 0                       # optional, default 0 - the start value
+#     duration: 1.5                 # optional, default 1.5s - how long the count takes
+#     prefix: "£"                   # optional, e.g. a currency symbol
+#     suffix: "%"                   # optional, e.g. a unit
+#     label: "of Earth is ocean"    # optional caption underneath
+#     size: 120                     # optional, default 120 (font size in px)

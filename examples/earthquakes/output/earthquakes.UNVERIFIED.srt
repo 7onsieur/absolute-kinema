@@ -1,0 +1,48 @@
+1
+00:00:00,612 --> 00:00:02,783
+How do earthquakes happen?
+
+2
+00:00:02,783 --> 00:00:04,808
+Earth's outer shell is broken into giant
+
+3
+00:00:04,808 --> 00:00:07,008
+pieces called tectonic plates,
+
+4
+00:00:07,008 --> 00:00:09,725
+which drift a few centimetres every year.
+
+5
+00:00:09,805 --> 00:00:11,205
+Where two plates meet,
+
+6
+00:00:11,205 --> 00:00:12,430
+their edges lock together,
+
+7
+00:00:12,430 --> 00:00:14,851
+and stress slowly builds up in the rock.
+
+8
+00:00:14,910 --> 00:00:16,435
+When the rock finally snaps,
+
+9
+00:00:16,435 --> 00:00:18,335
+the plates lurch past each other,
+
+10
+00:00:18,335 --> 00:00:20,661
+releasing energy in a split second.
+
+11
+00:00:20,710 --> 00:00:22,885
+That energy travels outwards as seismic
+
+12
+00:00:22,885 --> 00:00:26,140
+waves, and the shaking we feel is an earthquake.
+
